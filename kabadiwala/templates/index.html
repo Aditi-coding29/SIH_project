@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kabadiwala Connect — From Waste to Worth | SIH Prototype</title>
+  <title>Kabadiwala Connect — Informal E-Waste Collector Platform | SIH Prototype</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            },
+            teal: {
+              600: '#0d9488',
+              700: '#0f766e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet.js (Map Tracking) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+  <!-- ========================================== -->
+  <!-- 1. SIH PRESENTATION DEMO TOOLBAR (STICKY) -->
+  <!-- ========================================== -->
+  <aside aria-label="Demo Bar" class="bg-slate-900 text-white border-b border-slate-800 text-xs py-2 px-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold tracking-wide text-[10px] uppercase border border-emerald-500/30">
+          <i data-lucide="award" class="w-3 h-3"></i> SIH 2026 Prototype
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-extrabold tracking-wide text-[10px] uppercase border border-emerald-500/30">
+          <i data-lucide="award" class="w-3 h-3"></i> SIH E-Waste Prototype
+        </span>
+        <span class="text-slate-400 hidden sm:inline" data-i18n="roleDemoBar">SIH Demo Mode: Switch Persona</span>
+        <!-- Offline-Ready Indicator -->
+        <span class="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[11px] border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span data-i18n="offlineStatus">Field Offline Ready (Local Cache Active)</span>
+        </span>
+      </div>
+
+      <!-- Quick Role Switcher Buttons for Hackathon Judges -->
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-emerald-600 text-white shadow-sm" data-role="landing">
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="landing">
+          <i data-lucide="globe" class="w-3.5 h-3.5 inline mr-1"></i> <span data-i18n="navHome">Home</span>
+        </button>
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="user">
+          <i data-lucide="user" class="w-3.5 h-3.5 inline mr-1 text-emerald-600"></i> User (Ramesh)
+        <!-- Collector is PRIMARY -->
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400/30" data-role="collector">
+          <i data-lucide="truck" class="w-3.5 h-3.5 inline mr-1"></i> Collector (Santosh)
+        </button>
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="kabadiwala">
+          <i data-lucide="truck" class="w-3.5 h-3.5 inline mr-1 text-amber-600"></i> Kabadiwala (Santosh)
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="recycler">
+          <i data-lucide="factory" class="w-3.5 h-3.5 inline mr-1 text-purple-600"></i> Recycler (GreenCycle)
+        </button>
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="generator">
+          <i data-lucide="building" class="w-3.5 h-3.5 inline mr-1 text-blue-600"></i> Generator (Businesses)
+        </button>
+        <button class="role-switcher-btn px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white text-slate-700 hover:bg-slate-100" data-role="admin">
+          <i data-lucide="factory" class="w-3.5 h-3.5 inline mr-1 text-purple-600"></i> Recycler / Admin
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 inline mr-1 text-amber-600"></i> Admin & Anomalies
+        </button>
+      </div>
+
+      <!-- Language Switcher & Reset Button -->
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 bg-slate-800 px-2 py-1 rounded-lg border border-slate-700">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-slate-400"></i>
+          <select id="langSelect" class="bg-transparent text-white text-xs focus:outline-none cursor-pointer">
+            <option value="en" class="bg-slate-800 text-white">English</option>
+            <option value="hi" class="bg-slate-800 text-white">हिन्दी (Hindi)</option>
+            <option value="mr" class="bg-slate-800 text-white">मराठी (Marathi)</option>
+            <option value="ta" class="bg-slate-800 text-white">தமிழ் (Tamil)</option>
+            <option value="mr" class="bg-slate-800 text-white">मराठी (Marathi)</option>
+          </select>
+        </div>
+        <button onclick="resetDemoData()" title="Reset Demo Data" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN NAVBAR -->
+  <!-- ========================================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-9 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo & Tagline -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchRoleView('landing')">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchRoleView('collector')">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <i data-lucide="recycle" class="w-6 h-6"></i>
+          <i data-lucide="cpu" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
+            <span data-i18n="appName">Kabadiwala Connect</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase tracking-wide">SIH</span>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase tracking-wide">E-Waste</span>
+          </span>
+          <p class="text-[11px] font-semibold text-emerald-700" data-i18n="tagline">From Waste to Worth</p>
+        </div>
+      </div>
+
+      <!-- Center Links -->
+      <!-- Navigation Links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+        <a href="#how-it-works" class="hover:text-emerald-600 transition-colors" data-i18n="navHowItWorks">How It Works</a>
+        <a href="#value-chain" class="hover:text-emerald-600 transition-colors" data-i18n="valueChainTitle">Economic Chain</a>
+        <a href="#rates-section" class="hover:text-emerald-600 transition-colors" data-i18n="navRates">Live Rates</a>
+        <a href="#impact-section" class="hover:text-emerald-600 transition-colors" data-i18n="navImpact">Impact</a>
+        <button onclick="switchRoleView('collector')" class="hover:text-emerald-600 transition-colors font-bold text-emerald-800" data-i18n="navCollectorDash">Collector Portal</button>
+        <button onclick="switchRoleView('recycler')" class="hover:text-emerald-600 transition-colors" data-i18n="navRecyclerPortal">Authorized Recycler</button>
+        <button onclick="switchRoleView('generator')" class="hover:text-emerald-600 transition-colors" data-i18n="navGeneratorPortal">Give E-Waste</button>
+        <button onclick="switchRoleView('admin')" class="hover:text-emerald-600 transition-colors" data-i18n="navAdmin">Admin & Anomalies</button>
+      </nav>
+
+      <!-- Right CTAs -->
+      <div class="flex items-center gap-3">
+        <button onclick="openModal('scannerModal')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all shadow-md shadow-emerald-600/25 hover:shadow-lg">
+          <i data-lucide="scan-line" class="w-4 h-4"></i>
+          <span data-i18n="btnSellWaste">Sell / Recycle Waste</span>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openModal('createLotModal')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all shadow-md shadow-emerald-600/25">
+          <i data-lucide="package-plus" class="w-4 h-4"></i>
+          <span data-i18n="btnCreateLot">Create E-Waste Lot</span>
+        </button>
+        <button onclick="switchRoleView('kabadiwala')" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+          <i data-lucide="truck" class="w-3.5 h-3.5 text-amber-600"></i>
+          <span data-i18n="btnBecomeKabadiwala">Become a Kabadiwala</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Rate Ticker -->
+  <!-- Live Categories Bar -->
+  <div class="bg-emerald-50/70 border-b border-emerald-100/80 py-2 px-4 overflow-x-auto whitespace-nowrap">
+    <div class="max-w-7xl mx-auto flex items-center gap-3 text-xs">
+      <span class="font-bold text-emerald-900 flex items-center gap-1 shrink-0">
+        <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-600"></i> <span data-i18n="navRates">Platform Guaranteed Rates/kg</span>:
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-emerald-600"></i> Primary E-Waste Categories:
+      </span>
+      <div id="liveRateTicker" class="flex items-center gap-2 overflow-x-auto">
+      <div id="eWasteCategoriesTicker" class="flex items-center gap-2 overflow-x-auto">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. VIEW 1: LANDING PAGE -->
+  <!-- ========================================== -->
+  <main id="viewLanding" class="flex-1">
+  <main id="viewLanding" class="flex-1 hidden">
+    
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28 bg-gradient-to-b from-white via-emerald-50/40 to-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+          
+          <!-- SIH Problem Statement Badge -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold mb-6 border border-emerald-200 shadow-sm">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>SIH Theme: Bringing the Informal Collector into the Formal Recycling Chain</span>
+            <span>Smart India Hackathon: Informal E-Waste Collector Formalization</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6" data-i18n="heroTitle">
+            Bringing Informal Collectors into the Formal Recycling Chain
+            Bringing Informal E-Waste Collectors into the Formal Recycling Chain
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-600 mb-8 leading-relaxed font-normal" data-i18n="heroSubtitle">
+            Transform your recyclable scrap into cash & green rewards. Transparent digital weighing, fair market rates, and verified industrial recycling.
+            Empowering informal scrap collectors with data-driven price discovery, digital material lots, direct access to authorized recyclers, and transparent weighbridge verification.
+          </p>
+
+          <!-- CTAs -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+            <button onclick="openModal('scannerModal')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/30">
+              <i data-lucide="camera" class="w-5 h-5"></i>
+              <span data-i18n="btnSellWaste">Sell / Recycle Waste</span>
+            <button onclick="switchRoleView('collector')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/30">
+              <i data-lucide="truck" class="w-5 h-5"></i>
+              <span data-i18n="btnJoinCollector">Join as Informal Collector</span>
+            </button>
+            <button onclick="switchRoleView('kabadiwala')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-slate-700 bg-white hover:bg-slate-50 border-2 border-slate-200 transition-all shadow-sm">
+              <i data-lucide="shield-check" class="w-5 h-5 text-emerald-600"></i>
+              <span data-i18n="btnBecomeKabadiwala">Become a Kabadiwala</span>
+            <button onclick="switchRoleView('recycler')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl text-base font-bold text-slate-700 bg-white hover:bg-slate-50 border-2 border-slate-200 transition-all shadow-sm">
+              <i data-lucide="factory" class="w-5 h-5 text-purple-600"></i>
+              <span data-i18n="btnFindRecycler">Find Authorized Recycler</span>
+            </button>
+            <button onclick="switchRoleView('generator')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl text-base font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 transition-all">
+              <i data-lucide="building" class="w-5 h-5"></i>
+              <span data-i18n="btnGiveEwaste">Give E-Waste</span>
+            </button>
+          </div>
+
+          <!-- Hero Metrics Counters -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-slate-900">18,450 <span class="text-xs font-medium text-slate-500">kg</span></div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statDiverted">Total Waste Recycled</div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-slate-900">218.5 <span class="text-xs font-medium text-slate-500">kg</span></div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statEwasteDiverted">Verified E-Waste Recycled</div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-emerald-600">324</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statCollectors">Verified Collectors</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statCollectors">Digitized Informal Collectors</div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-amber-600">₹1,84,500</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statCashback">Green Rewards Issued</div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-purple-600">18</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statRecyclers">CPCB Authorized Recyclers</div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-purple-600">99.2%</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statPurity">Recycler Verification Rate</div>
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
+              <div class="text-2xl sm:text-3xl font-black text-amber-600">22.4%</div>
+              <div class="text-xs font-semibold text-slate-500 mt-1" data-i18n="statAvgMargin">Average Collector Margin</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works (10-Step Visual Flow) -->
+    <section id="how-it-works" class="py-16 bg-white border-y border-slate-200">
+    <!-- How It Works (10-Step E-Waste Process) -->
+    <section class="py-16 bg-white border-y border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Step-by-Step Transparency</span>
+          <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Formalization Pipeline</span>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 mt-1" data-i18n="howItWorksTitle">
+            How It Works — The Closed-Loop Recycling Chain
+            The Closed-Loop Formalization Process
+          </h2>
+          <p class="text-sm text-slate-600 mt-2" data-i18n="howItWorksSub">
+            Transparent, digitized, and empowering informal green champions
+            From informal street collection to certified industrial smelting & recovery
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <!-- Step 1 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg mb-3">
+              📸
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step1Title">1. Upload Photo</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step1Desc">Snap a photo of your scrap or pick common recyclables.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs">
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">📦</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step1Title">1. Collect & Segregate</h4>
+            <p class="text-slate-500" data-i18n="step1Desc">Informal collector gathers e-waste from repair shops and households.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold text-lg mb-3">
+              🤖
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step2Title">2. AI Scans Waste</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step2Desc">Identifies category (Plastic, Metal, Paper) & estimate.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">🏷️</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step2Title">2. Create Digital Lot</h4>
+            <p class="text-slate-500" data-i18n="step2Desc">Collector records material, photo, estimated weight, and condition.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg mb-3">
+              💰
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step3Title">3. Transparent Rate</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step3Desc">Fixed platform rate per kg displayed before booking.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">🤖</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step3Title">3. AI Material Scan</h4>
+            <p class="text-slate-500" data-i18n="step3Desc">Assists in identifying PCBs, cables, batteries, and display panels.</p>
+          </div>
+          <!-- Step 4 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center font-bold text-lg mb-3">
+              🚚
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step4Title">4. Request Pickup</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step4Desc">Select convenient slot; nearby Kabadiwala is dispatched.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">📈</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step4Title">4. Price Discovery</h4>
+            <p class="text-slate-500" data-i18n="step4Desc">Transparent market price range and competitive recycler quotes.</p>
+          </div>
+          <!-- Step 5 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center font-bold text-lg mb-3">
+              ⚖️
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step5Title">5. Digital Weighing</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step5Desc">Kabadiwala weighs scrap on certified digital scales.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">🤝</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step5Title">5. Match Recycler</h4>
+            <p class="text-slate-500" data-i18n="step5Desc">Algorithmic match with CPCB/SPCB authorized recycling facilities.</p>
+          </div>
+          <!-- Step 6 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg mb-3">
+              💵
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step6Title">6. Instant Fair Pay</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step6Desc">Paid immediately via UPI, Cash, or Wallet for actual weight.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">🔄</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step6Title">6. Bulk Aggregation</h4>
+            <p class="text-slate-500" data-i18n="step6Desc">Merge multiple small lots into wholesale bulk consignments.</p>
+          </div>
+          <!-- Step 7 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-lg mb-3">
+              📍
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step7Title">7. In-Transit Tracking</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step7Desc">Track scrap movement from your doorstep to recovery hub.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">📄</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step7Title">7. Digital Handover</h4>
+            <p class="text-slate-500" data-i18n="step7Desc">Generate formal digital dispatch record and lock agreed rate.</p>
+          </div>
+          <!-- Step 8 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg mb-3">
+              📦
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step8Title">8. Bulk Aggregation</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step8Desc">Kabadiwala aggregates sorted scrap for industrial recycler.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">⚖️</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step8Title">8. Weighbridge Assay</h4>
+            <p class="text-slate-500" data-i18n="step8Desc">Recycler tests weight and assay; automated mismatch detection.</p>
+          </div>
+          <!-- Step 9 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold text-lg mb-3">
+              🏭
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step9Title">9. Recycler Verifies</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step9Desc">Industrial facility confirms receipt; recycling verified.</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">⚡</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step9Title">9. Instant Settlement</h4>
+            <p class="text-slate-500" data-i18n="step9Desc">Direct payment to collector via UPI or bank transfer.</p>
+          </div>
+          <!-- Step 10 -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-emerald-500 hover:shadow-md transition-all">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-lg mb-3">
+              🌱
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 mb-1" data-i18n="step10Title">10. Green Cashback</h3>
+            <p class="text-xs text-slate-500 leading-relaxed" data-i18n="step10Desc">Earn CSR-funded Green Points and eco cashback rewards!</p>
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="text-2xl mb-2">✅</div>
+            <h4 class="font-bold text-slate-900 text-sm mb-1" data-i18n="step10Title">10. Recycling Verified</h4>
+            <p class="text-slate-500" data-i18n="step10Desc">Closed-loop certificate generated with verified environmental points.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Circular Economy Real Commercial Value Chain -->
+    <section id="value-chain" class="py-16 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Business Logic & Integrity</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1" data-i18n="valueChainTitle">
+            The Real Circular Economy Model
+          </h2>
+          <p class="text-sm text-slate-600 mt-2" data-i18n="valueChainSub">
+            Fair margins, dignified livelihoods, and corporate environmental responsibility
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+          <!-- User Stage -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+              <i data-lucide="home" class="w-6 h-6"></i>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Phase 1: Segregation</span>
+            <h3 class="font-bold text-lg text-slate-900 mt-2 mb-2" data-i18n="chainUserTitle">Household User</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-4" data-i18n="chainUserDesc">
+              Sells sorted waste at fixed fair rates. Receives immediate payout + CSR green cashback.
+            </p>
+            <div class="p-3 bg-emerald-50/50 rounded-xl text-xs text-emerald-800 font-medium">
+              💡 Example: Sells 5 kg Plastic @ ₹10/kg = ₹50 paid in cash/UPI by Kabadiwala.
+            </div>
+          </div>
+
+          <!-- Kabadiwala Stage -->
+          <div class="bg-white p-6 rounded-2xl border-2 border-emerald-500 shadow-md relative">
+            <div class="absolute -top-3 right-4 bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              Core Economic Driver
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
+              <i data-lucide="truck" class="w-6 h-6"></i>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Phase 2: Aggregation</span>
+            <h3 class="font-bold text-lg text-slate-900 mt-2 mb-2" data-i18n="chainKabTitle">Informal Kabadiwala</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-4" data-i18n="chainKabDesc">
+              Buys scrap from users and aggregates in bulk. Sells to formal recyclers earning a profitable commercial margin.
+            </p>
+            <div class="p-3 bg-amber-50/50 rounded-xl text-xs text-amber-900 font-medium">
+              📈 Margin Logic: Sells 5 kg Plastic to Recycler @ ₹13.50/kg = ₹67.50. Gross margin = ₹17.50 profit!
+            </div>
+          </div>
+
+          <!-- Recycler Stage -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4">
+              <i data-lucide="factory" class="w-6 h-6"></i>
+            </div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Phase 3: Circular Smelting</span>
+            <h3 class="font-bold text-lg text-slate-900 mt-2 mb-2" data-i18n="chainRecTitle">Formal Industrial Recycler</h3>
+            <p class="text-xs text-slate-500 leading-relaxed mb-4" data-i18n="chainRecDesc">
+              Purchases certified clean bulk scrap for smelting & pulping. Digitally confirms the recycling chain.
+            </p>
+            <div class="p-3 bg-purple-50/50 rounded-xl text-xs text-purple-900 font-medium">
+              🌱 Closed Loop: Verified receipt triggers Green Reward Fund distribution to user & Kabadiwala.
+            </div>
+          </div>
+        </div>
+
+        <!-- Green Reward Fund Banner -->
+        <div class="mt-8 bg-gradient-to-r from-emerald-800 to-teal-900 text-white p-6 rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="max-w-2xl">
+            <span class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 font-bold text-[10px] uppercase tracking-wider border border-emerald-500/30">Institutional Incentive Pool</span>
+            <h4 class="text-lg font-bold mt-2">Where does the User Green Cashback come from?</h4>
+            <p class="text-xs text-emerald-100/80 mt-1 leading-relaxed">
+              Cashback is funded entirely via corporate CSR sponsorships (Tata Trusts, Unilever, Godrej) & Extended Producer Responsibility (EPR) recycling allocations. The Kabadiwala does NOT pay the cashback; they simply pay the scrap price!
+            </p>
+          </div>
+          <div class="text-center md:text-right shrink-0 bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+            <span class="text-[11px] text-emerald-200 block">Available CSR Reward Pool</span>
+            <span class="text-2xl font-black text-white">₹5,00,000</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Platform Rates Table Section -->
+    <section id="rates-section" class="py-16 bg-white border-t border-slate-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Transparent Pricing</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
+            Current Fixed Platform Scrap Rates
+          </h2>
+          <p class="text-xs text-slate-500 mt-1">Rates are managed centrally and updated according to industrial market values.</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">🧴</div>
+            <h4 class="font-bold text-xs text-slate-800">Plastic</h4>
+            <div class="text-base font-black text-emerald-600 mt-1">₹10 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">📦</div>
+            <h4 class="font-bold text-xs text-slate-800">Cardboard</h4>
+            <div class="text-base font-black text-amber-600 mt-1">₹7 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">📄</div>
+            <h4 class="font-bold text-xs text-slate-800">Paper</h4>
+            <div class="text-base font-black text-blue-600 mt-1">₹8 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">📰</div>
+            <h4 class="font-bold text-xs text-slate-800">Newspaper</h4>
+            <div class="text-base font-black text-indigo-600 mt-1">₹20 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">🥫</div>
+            <h4 class="font-bold text-xs text-slate-800">Metal / Iron</h4>
+            <div class="text-base font-black text-rose-600 mt-1">₹25 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">🍾</div>
+            <h4 class="font-bold text-xs text-slate-800">Glass</h4>
+            <div class="text-base font-black text-purple-600 mt-1">₹6 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-center">
+            <div class="text-2xl mb-1">💻</div>
+            <h4 class="font-bold text-xs text-slate-800">E-Waste</h4>
+            <div class="text-base font-black text-cyan-600 mt-1">₹45 <span class="text-[10px] font-normal text-slate-500">/kg</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 4. VIEW 2: USER DASHBOARD -->
+  <!-- 4. VIEW 2: COLLECTOR DASHBOARD (PRIMARY) -->
+  <!-- ========================================== -->
+  <main id="viewUserDashboard" class="flex-1 hidden py-8">
+  <main id="viewCollectorDashboard" class="flex-1 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <!-- Top Profile & Welcome Card -->
+      <!-- Collector Digital Identity Card -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shadow-emerald-500/20">
+            <i data-lucide="user" class="w-8 h-8"></i>
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-700 flex items-center justify-center text-white text-2xl font-black shadow-md shadow-emerald-600/20">
+            <i data-lucide="truck" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl font-black text-slate-900" id="uProfileName">Ramesh Kumar</h2>
+              <span id="uEcoLevelBadge" class="px-3 py-0.5 rounded-full text-xs font-bold badge-eco-collector">Eco Collector</span>
+              <h2 class="text-xl font-black text-slate-900" id="cProfileName">Santosh Bhai</h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Verified Collector</span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 flex items-center gap-1">
+                <i data-lucide="shield" class="w-3 h-3"></i> Trust Score: <span id="cTrustScoreBadge">95/100</span>
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+              <span class="font-mono font-bold text-emerald-800" id="uProfileCode">KC-USR-10001</span>
+            <p class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-2">
+              <span class="font-mono font-bold text-emerald-800" id="cProfileCode">KC-COL-10001</span>
+              <span>•</span>
+              <span id="uProfileMaskedId">Aadhaar: XXXX-XXXX-8921</span>
+              <span id="cProfileMaskedId">CPCB-REF: XXXX-XXXX-3412</span>
+              <span>•</span>
+              <span class="text-emerald-700 font-semibold flex items-center gap-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Verified Household
+              </span>
+              <span id="cProfileArea">Sector 21, 22, Dwarka & Janakpuri, New Delhi</span>
+            </p>
+            <p class="text-xs text-slate-400 mt-1" id="uProfileAddress">Flat 402, Green Meadows, Sector 21, New Delhi</p>
+          </div>
+        </div>
+
+        <button onclick="openModal('scannerModal')" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/25">
+          <i data-lucide="scan" class="w-4 h-4"></i>
+          <span data-i18n="btnSellWaste">Sell / Recycle Waste</span>
+        </button>
+      </div>
+
+      <!-- 4 Key Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="totalWasteRecycled">Total Waste Recycled</span>
+          <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-2" id="uTotalWasteRecycled">27.5 kg</div>
+          <span class="text-[11px] text-emerald-600 font-semibold mt-1 block">Certified Closed-Loop</span>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button onclick="openModal('createLotModal')" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all shadow-md shadow-emerald-600/25">
+            <i data-lucide="package-plus" class="w-4 h-4"></i>
+            <span data-i18n="btnCreateLot">Create E-Waste Lot</span>
+          </button>
+          <button onclick="openMergeLotsModal()" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors">
+            <i data-lucide="combine" class="w-4 h-4"></i>
+            <span data-i18n="btnMergeLots">Bulk Merge</span>
+          </button>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="greenPoints">Green Points</span>
+          <div class="text-2xl sm:text-3xl font-black text-emerald-600 mt-2" id="uTotalGreenPoints">380</div>
+          <span class="text-[11px] text-slate-400 mt-1 block">10 pts = ₹1.00 Cashback</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="cashbackEarned">Cashback Earned</span>
+          <div class="text-2xl sm:text-3xl font-black text-amber-600 mt-2" id="uTotalCashback">₹38.00</div>
+          <span class="text-[11px] text-slate-400 mt-1 block">Funded by CSR Reward Pool</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="verifiedPickups">Verified Pickups</span>
+          <div class="text-2xl sm:text-3xl font-black text-purple-600 mt-2" id="uTotalVerifiedPickups">8</div>
+          <span class="text-[11px] text-purple-600 font-semibold mt-1 block">100% Transparency</span>
+        </div>
+      </div>
+
+      <!-- Active Pickups & Live Tracking -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900" data-i18n="activePickups">Active Pickups & Waste Journey</h3>
+            <p class="text-xs text-slate-500">Track real-time collection, weighing, and journey to the industrial recovery facility.</p>
+          </div>
+        </div>
+
+        <div id="userActivePickupsContainer" class="space-y-3">
+          <!-- Populated by JS -->
+        </div>
+        <div id="userNoActivePickupsNotice" class="text-center py-6 text-slate-400 text-xs hidden">
+          No pickups currently in progress. Click "Sell / Recycle Waste" to schedule!
+        </div>
+      </div>
+
+      <!-- Environmental Contribution Breakdown & Impact -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Chart -->
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-1">Recycled Material Breakdown</h3>
+            <p class="text-xs text-slate-500 mb-4">Verified quantities processed by category.</p>
+            <div class="h-48 relative">
+              <canvas id="userCategoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equivalencies -->
+        <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 class="text-base font-bold text-slate-900 mb-1">🌱 Your Verified Environmental Footprint</h3>
+          <p class="text-xs text-slate-500 mb-6">Real environmental savings achieved by diverting scrap from municipal landfills.</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100">
+              <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm mb-2">
+                🌍
+              </div>
+              <span class="text-xs text-slate-500">CO2 Emissions Avoided</span>
+              <div class="text-xl font-black text-emerald-800 mt-1" id="uCo2Saved">68.7 kg</div>
+              <span class="text-[10px] text-emerald-600 mt-0.5 block">GHG factor calculated</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-100">
+              <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm mb-2">
+                🌳
+              </div>
+              <span class="text-xs text-slate-500">Equivalent Trees Spared</span>
+              <div class="text-xl font-black text-amber-800 mt-1" id="uTreesSaved">3.2 trees</div>
+              <span class="text-[10px] text-amber-600 mt-0.5 block">Paper & pulping savings</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-100">
+              <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm mb-2">
+                💧
+              </div>
+              <span class="text-xs text-slate-500">Water Conserved</span>
+              <div class="text-xl font-black text-blue-800 mt-1" id="uWaterSaved">825 L</div>
+              <span class="text-[10px] text-blue-600 mt-0.5 block">Industrial processing offset</span>
+            </div>
+          </div>
+
+          <!-- Gamified Eco Level Stepper -->
+          <div class="mt-6 pt-6 border-t border-slate-100">
+            <div class="flex items-center justify-between text-xs font-bold mb-2">
+              <span class="text-slate-700">Gamification Progression: Level 2 (Eco Collector)</span>
+              <span class="text-emerald-700">27.5 / 50 kg to Recycling Champion</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full" style="width: 55%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction History Table -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1" data-i18n="myTransactions">Transaction History</h3>
+        <p class="text-xs text-slate-500 mb-4">Complete immutable audit trail of past scrap sales, weighing records, and rewards.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="py-2.5 px-3">Transaction ID</th>
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">Total Weight</th>
+                <th class="py-2.5 px-3">Amount Paid</th>
+                <th class="py-2.5 px-3">Recycler Status</th>
+                <th class="py-2.5 px-3">Green Reward</th>
+                <th class="py-2.5 px-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="userTransactionsTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 5. VIEW 3: KABADIWALA DASHBOARD -->
+  <!-- ========================================== -->
+  <main id="viewKabadiwalaDashboard" class="flex-1 hidden py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <!-- Profile Card -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold shadow-md shadow-amber-500/20">
+            <i data-lucide="truck" class="w-8 h-8"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-xl font-black text-slate-900" id="kProfileName">Santosh Bhai</h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Partner Collector</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+              <span class="font-mono font-bold text-emerald-800" id="kProfileCode">KC-KAB-20001</span>
+              <span>•</span>
+              <span id="kProfileServiceArea">Sector 21 & 22, New Delhi</span>
+              <span>•</span>
+              <span class="text-amber-600 font-bold" id="kProfileRating">4.88 ★ (26 reviews)</span>
+              <span>•</span>
+              <span class="text-emerald-700 font-semibold" id="kProfileMaskedId">Govt Ref: XXXX-XXXX-3412</span>
+            </p>
+          </div>
+        </div>
+
+        <button onclick="openDeliverToRecyclerModal()" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-bold text-white bg-amber-600 hover:bg-amber-700 transition-all shadow-md shadow-amber-600/25">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span data-i18n="deliverToRecyclerBtn">Deliver Consignment to Recycler</span>
+        </button>
+      </div>
+
+      <!-- Today's Collection Summary Cards -->
+      <!-- 6 Key Summary Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="newRequests">New Requests</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="kNewRequestsCount">2</div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="activeLotsCount">Active Lots</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="cActiveLotsCount">2</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="acceptedPickups">Accepted</span>
+          <div class="text-2xl font-black text-amber-600 mt-1" id="kAcceptedPickupsCount">1</div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="totalCollectedKg">E-Waste Collected</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="cTotalCollectedKg">245 kg</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="completedPickups">Completed</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1" id="kCompletedPickupsCount">12</div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="verifiedDeliveredKg">Verified at Recycler</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1" id="cVerifiedDeliveredKg">218.5 kg</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="totalCollected">Total Collected</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="kTotalCollectedKg">185 kg</div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="grossSalesLabel">Gross Sales</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="cGrossSales">₹34,850</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="recyclerDeliveries">Recycler Verified</span>
+          <div class="text-2xl font-black text-purple-600 mt-1" id="kVerifiedAtRecycler">142.5 kg</div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="grossMarginLabel">Gross Margin</span>
+          <div class="text-2xl font-black text-amber-600 mt-1" id="cGrossMargin">₹6,420</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Green Points</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1" id="kGreenPoints">920</div>
+          <div class="text-2xl font-black text-purple-600 mt-1" id="cGreenPoints">1,420</div>
+        </div>
+      </div>
+
+      <!-- Commercial Margins & Earnings Section -->
+      <!-- Commercial Margins & Earnings Breakdown Card -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900" data-i18n="earningsTitle">Commercial Margins & Net Earnings</h3>
+            <p class="text-xs text-slate-500">Real-world commercial flow: Household Purchase Cost vs Recycler Downstream Revenue.</p>
+            <h3 class="text-base font-bold text-slate-900">Commercial Margins & Net Earnings</h3>
+            <p class="text-xs text-slate-500">Real-world economics: Procurement Cost from sources vs Recycler Payout received.</p>
+          </div>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            Self-Sustaining Economy
+            No Free Money • Real Wholesale Margin
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-[11px] text-slate-500 block" data-i18n="procurementCost">Total Procurement Cost</span>
+            <span class="text-lg font-bold text-slate-800" id="kProcurementCost">₹1,956.00</span>
+            <span class="text-slate-400 block text-[10px]">Procurement Cost (Sources)</span>
+            <span class="text-base font-bold text-slate-800" id="cMarginProcCost">₹28,430.00</span>
+          </div>
+          <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+            <span class="text-[11px] text-emerald-800 block" data-i18n="recyclerRevenue">Recycler Sale Value</span>
+            <span class="text-lg font-bold text-emerald-700" id="kRecyclerRevenue">₹2,664.75</span>
+            <span class="text-emerald-800 block text-[10px]">Recycler Sales Value</span>
+            <span class="text-base font-bold text-emerald-700" id="cMarginRecSales">₹34,850.00</span>
+          </div>
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200">
+            <span class="text-[11px] text-amber-800 block" data-i18n="grossMargin">Gross Margin (Profit)</span>
+            <span class="text-lg font-bold text-amber-700" id="kGrossMargin">₹708.75</span>
+            <span class="text-amber-800 block text-[10px]">Gross Commercial Margin</span>
+            <span class="text-base font-bold text-amber-700" id="cMarginGrossProfit">+₹6,420.00</span>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-[11px] text-slate-500 block" data-i18n="operatingExpenses">Operating Expenses</span>
+            <span class="text-lg font-bold text-slate-600" id="kOperatingExpenses">₹150.00</span>
+            <span class="text-slate-400 block text-[10px]">Operating & Cart Expenses</span>
+            <span class="text-base font-bold text-slate-600" id="cMarginExpenses">₹180.00</span>
+          </div>
+          <div class="p-3 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-xl text-white shadow-sm col-span-2 sm:col-span-1">
+            <span class="text-[11px] text-emerald-100 block" data-i18n="netEarnings">Estimated Net Earnings</span>
+            <span class="text-xl font-black" id="kNetEarnings">₹558.75</span>
+          <div class="p-3 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-xl text-white col-span-2 sm:col-span-1 shadow-sm">
+            <span class="text-emerald-100 block text-[10px]">Estimated Net Earnings</span>
+            <span class="text-lg font-black" id="cMarginNetEarnings">₹6,240.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Incoming Requests & Active Deliveries -->
+      <!-- Digital Material Lots Ledger -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1">Assigned & Nearby Pickup Requests</h3>
+        <p class="text-xs text-slate-500 mb-4">Accept requests, navigate to user doorstep, and perform calibrated digital weighing.</p>
+
+        <div id="kabadiwalaPickupsList" class="space-y-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- "My Collected Waste" (Aggregation Inventory Stock) -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900" data-i18n="collectedInventoryTitle">My Collected Waste (Aggregation Inventory)</h3>
+            <p class="text-xs text-slate-500" data-i18n="inventorySub">Aggregate scrap from households to deliver in bulk to formal recyclers</p>
+            <h3 class="text-base font-bold text-slate-900" data-i18n="myLotsTitle">Digital Material Lots Ledger</h3>
+            <p class="text-xs text-slate-500">Track classified e-waste lots, run price discovery, and dispatch to authorized recyclers.</p>
+          </div>
+          <button onclick="openDeliverToRecyclerModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-sm">
+            Dispatch to Recycler MRF
+          </button>
+          <div class="flex items-center gap-1.5 overflow-x-auto">
+            <button onclick="loadCollectorLots()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              All Lots
+            </button>
+            <button onclick="loadCollectorLots('lot_created')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
+              Awaiting Recycler
+            </button>
+            <button onclick="loadCollectorLots('handover_scheduled')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
+              In Transit
+            </button>
+            <button onclick="loadCollectorLots('verified')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200">
+              Verified ✓
+            </button>
+          </div>
+        </div>
+
+        <div id="kabadiwalaInventoryGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <!-- Injected via JS -->
+        <div id="collectorLotsContainer" class="space-y-3">
+          <!-- Injected via app.js -->
+        </div>
+
+        <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between text-xs gap-3 font-semibold">
+          <div>Total Stock Weight: <span class="font-bold text-slate-900" id="kInvTotalWeight">79 kg</span></div>
+          <div>Projected Recycler Payout: <span class="font-bold text-emerald-700" id="kInvRecyclerVal">₹1,235.75</span></div>
+          <div>Projected Gross Margin: <span class="font-bold text-amber-700" id="kInvGrossMargin">₹300.25</span></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 6. VIEW 4: ADMIN / RECYCLER PORTAL -->
+  <!-- 5. VIEW 3: AUTHORIZED RECYCLER DASHBOARD -->
+  <!-- ========================================== -->
+  <main id="viewAdminDashboard" class="flex-1 hidden py-8">
+  <main id="viewRecyclerDashboard" class="flex-1 py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <!-- Header -->
+      <!-- Facility Header -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">Formal Verification Authority</span>
+          <h2 class="text-xl font-black text-slate-900 mt-1" data-i18n="adminTitle">Admin & Recycler Operations Portal</h2>
+          <p class="text-xs text-slate-500 mt-0.5" data-i18n="recyclerFacility">Industrial Recovery Facility: Swachh Bharat Industrial Smelters & Pulpers (Bawana Hub)</p>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800" data-i18n="facilityLabel">
+            CPCB / SPCB Authorized Recycler Facility
+          </span>
+          <h2 class="text-xl font-black text-slate-900 mt-1" data-i18n="recyclerDashTitle">Authorized Recycler Intake & Weighbridge Portal</h2>
+          <p class="text-xs text-slate-500 mt-0.5">GreenCycle Advanced E-Waste Solutions • Bawana Industrial Hub (License: CPCB/EW-REG/DL-092/2024)</p>
+        </div>
+        <button onclick="loadAdminData()" class="px-4 py-2 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline mr-1"></i> Refresh Ledger
+        <button onclick="loadRecyclerData()" class="px-4 py-2 rounded-xl text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-colors">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 inline mr-1"></i> Refresh Handovers
+        </button>
+      </div>
+
+      <!-- Macro System Statistics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Total Registered Users</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="adminTotalUsers">3</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Verified Kabadiwalas</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1" id="adminTotalKabadiwalas">3</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Total Scrap Diverted</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="adminTotalWasteDiverted">212.5 kg</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Paid to Households</span>
+          <div class="text-2xl font-black text-amber-600 mt-1" id="adminTotalHouseholdsPaid">₹2,338.50</div>
+        </div>
+      </div>
+
+      <!-- Recycler Bulk Delivery Verification Table -->
+      <!-- Weighbridge Inspection Table -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900" data-i18n="pendingConsignments">Pending Consignments for Truck Weighbridge Inspection</h3>
+            <p class="text-xs text-slate-500">Formal verification triggers closed-loop certification, Green Points, and user cashback.</p>
+          </div>
+        </div>
+        <h3 class="text-base font-bold text-slate-900 mb-1" data-i18n="pendingHandoversTitle">Pending Consignments for Weighbridge Inspection</h3>
+        <p class="text-xs text-slate-500 mb-4" data-i18n="weightMismatchNotice">Notice: Weight variance &gt; 3% automatically triggers an anomaly investigation report.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="py-2.5 px-3">Delivery Code</th>
+                <th class="py-2.5 px-3">Kabadiwala</th>
+                <th class="py-2.5 px-3">Manifested Wt.</th>
+                <th class="py-2.5 px-3">Recycler Payout</th>
+                <th class="py-2.5 px-3">Gross Margin</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3">Handover ID</th>
+                <th class="py-2.5 px-3">Collector</th>
+                <th class="py-2.5 px-3">Subcategory</th>
+                <th class="py-2.5 px-3">Declared Wt.</th>
+                <th class="py-2.5 px-3">Weighbridge Wt.</th>
+                <th class="py-2.5 px-3">Total Value</th>
+                <th class="py-2.5 px-3 text-right">Verification Action</th>
+              </tr>
+            </thead>
+            <tbody id="recyclerDeliveriesTableBody">
+              <!-- Injected by JS -->
+            <tbody id="recyclerPendingHandovers">
+              <!-- Injected by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dynamic Scrap Rates & Environmental Impact Configuration -->
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 6. VIEW 4: SECONDARY GENERATOR PORTAL -->
+  <!-- ========================================== -->
+  <main id="viewGeneratorDashboard" class="flex-1 py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Last-Mile Collection Sourcing</span>
+          <h2 class="text-xl font-black text-slate-900 mt-1" data-i18n="generatorTitle">Give E-Waste to Nearby Informal Collectors</h2>
+          <p class="text-xs text-slate-500 mt-0.5" data-i18n="generatorSub">For IT offices, electronics repair clinics, colleges, and households</p>
+        </div>
+        <button onclick="openModal('generatorRequestModal')" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5 inline mr-1"></i> Post E-Waste Request
+        </button>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1" data-i18n="manageRatesTitle">Dynamic Scrap Rate Management (₹ / kg)</h3>
+        <p class="text-xs text-slate-500 mb-4">Changes made here immediately update user quotes and Kabadiwala purchasing power.</p>
+        <h3 class="text-base font-bold text-slate-900 mb-1">Active Sourcing Requests</h3>
+        <p class="text-xs text-slate-500 mb-4">Informal collectors accept these requests, collect materials on-site, and convert them into official digital lots.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                <th class="py-2.5 px-3">Category</th>
+                <th class="py-2.5 px-3">User Rate (₹/kg)</th>
+                <th class="py-2.5 px-3">Recycler Rate (₹/kg)</th>
+                <th class="py-2.5 px-3">Impact Points / kg</th>
+                <th class="py-2.5 px-3 text-right">Update</th>
+              </tr>
+            </thead>
+            <tbody id="adminRatesTableBody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        <div id="generatorRequestsList" class="space-y-3">
+          <!-- Injected via app.js -->
+        </div>
+      </div>
+
+      <!-- Green Reward Fund Management -->
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 7. VIEW 5: ADMIN & ANOMALY MONITOR -->
+  <!-- ========================================== -->
+  <main id="viewAdminDashboard" class="flex-1 py-8 hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-1" data-i18n="greenRewardFundTitle">National Green Reward Fund (CSR Sponsored)</h3>
+        <p class="text-xs text-slate-500 mb-4">Dedicated corporate fund for household recycling cashback and informal collector incentives.</p>
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">CPCB Regulatory Oversight</span>
+        <h2 class="text-xl font-black text-slate-900 mt-1" data-i18n="anomalyTitle">AI Anomaly Detection & Regulatory Audit Log</h2>
+        <p class="text-xs text-slate-500 mt-0.5" data-i18n="anomalySub">Automated flagging of price outliers, weight discrepancies, and irregular patterns</p>
+      </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
+            <span class="text-xs text-emerald-700 font-bold" data-i18n="fundPoolBalance">Available CSR Reward Pool</span>
+            <div class="text-2xl font-black text-emerald-900 mt-1" id="adminFundPool">₹5,00,000</div>
+          </div>
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span class="text-xs text-slate-500 font-bold" data-i18n="fundDisbursed">Total Cashback Disbursed</span>
+            <div class="text-2xl font-black text-slate-800 mt-1" id="adminFundDisbursed">₹12,450</div>
+          </div>
+          <div class="p-4 bg-purple-50 rounded-2xl border border-purple-200">
+            <span class="text-xs text-purple-700 font-bold">Conversion Rate</span>
+            <div class="text-2xl font-black text-purple-900 mt-1">10 pts = ₹1.00</div>
+          </div>
+      <!-- Macro System Statistics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Digitized Collectors</span>
+          <div class="text-2xl font-black text-slate-900 mt-1" id="admTotalCollectors">3</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Authorized Recyclers</span>
+          <div class="text-2xl font-black text-purple-600 mt-1" id="admTotalRecyclers">3</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Verified Recycled E-Waste</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1" id="admTotalVerifiedKg">218.5 kg</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-xs font-bold text-slate-400">Formal Payouts Disbursed</span>
+          <div class="text-2xl font-black text-amber-600 mt-1" id="admTotalPayout">₹34,850</div>
+        </div>
+      </div>
+
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">
+          <span class="font-bold text-slate-800" data-i18n="sponsorsLabel">Active CSR & Institutional Partners:</span>
+          <span id="adminFundSponsors">Tata Trusts Sustainability Fund, Unilever Clean India Initiative, Godrej Circular Living CSR, National Green Corps</span>
+      <!-- Flagged Anomalies Container -->
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-amber-600"></i> Active Anomaly Alerts
+        </h3>
+        <div id="adminAnomaliesList" class="space-y-3">
+          <!-- Injected via app.js -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 7. MODALS -->
+  <!-- 8. MODALS -->
+  <!-- ========================================== -->
+
+  <!-- MODAL A: AI WASTE SCANNER & MIXED WASTE CART -->
+  <div id="scannerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+  <!-- MODAL 1: CREATE E-WASTE LOT & AI SCANNER -->
+  <div id="createLotModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 p-6 relative">
+      <!-- Close Button -->
+      <button onclick="closeModal('scannerModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200 transition-colors">
+      <button onclick="closeModal('createLotModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="mb-5">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          Computer Vision AI Model
+        </span>
+        <h3 class="text-xl font-extrabold text-slate-900 mt-1.5" data-i18n="scannerTitle">AI Recyclable Waste Scanner</h3>
+        <p class="text-xs text-slate-500" data-i18n="scannerSub">Select a sample or upload a photo of your scrap materials</p>
+      </div>
+      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+        Informal Collector Entry
+      </span>
+      <h3 class="text-xl font-black text-slate-900 mt-1">Create Digital Material Lot</h3>
+      <p class="text-xs text-slate-500 mb-4">Classify collected e-waste, record actual weight, and initiate price discovery.</p>
+
+      <!-- Scanner Viewport Area -->
+      <div class="scanner-container rounded-2xl bg-slate-900 text-white min-h-[220px] flex items-center justify-center relative border-2 border-slate-800 overflow-hidden mb-4">
+        <!-- Laser Sweep Bar (Active during scan) -->
+      <!-- AI Scanner Area -->
+      <div class="scanner-container rounded-2xl bg-slate-900 text-white min-h-[200px] flex items-center justify-center relative border border-slate-800 overflow-hidden mb-4">
+        <div id="scannerScanningOverlay" class="absolute inset-0 z-20 hidden">
+          <div class="scanner-laser"></div>
+          <div class="absolute inset-0 bg-emerald-950/40 scanner-grid flex flex-col items-center justify-center">
+            <div class="p-3 rounded-full bg-emerald-500/20 text-emerald-400 mb-2 animate-spin">
+              <i data-lucide="scan-line" class="w-8 h-8"></i>
+            </div>
+            <span class="text-xs font-mono font-semibold text-emerald-300 tracking-wider" data-i18n="analyzingText">
+              AI Neural Model Scanning Waste Features...
+            </span>
+            <i data-lucide="scan" class="w-8 h-8 text-emerald-400 animate-spin mb-2"></i>
+            <span class="text-xs font-mono font-bold text-emerald-300">AI Model Analyzing E-Waste Circuitry & Metals...</span>
+          </div>
+        </div>
+
+        <!-- Preview Image -->
+        <img id="scannerPreviewImg" src="" alt="Waste Preview" class="w-full h-56 object-cover hidden z-10">
+        <img id="scannerPreviewImg" src="" alt="E-Waste Preview" class="w-full h-48 object-cover hidden z-10">
+
+        <!-- Default Placeholder -->
+        <div id="scannerPlaceholder" class="p-6 text-center z-10">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="image" class="w-6 h-6"></i>
+          </div>
+          <p class="text-xs font-semibold text-slate-300" data-i18n="dropPhotoText">
+            Click to upload scrap photo or test with pre-analyzed samples below
+          </p>
+          <div class="mt-4 flex items-center justify-center gap-2">
+        <div id="scannerPlaceholder" class="p-4 text-center z-10">
+          <i data-lucide="cpu" class="w-10 h-10 text-emerald-400 mx-auto mb-2"></i>
+          <p class="text-xs font-semibold text-slate-300">Test AI classification with 1-click e-waste samples below or upload photo</p>
+          <div class="mt-3">
+            <label class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 cursor-pointer shadow-sm">
+              <i data-lucide="upload" class="w-3.5 h-3.5 inline mr-1"></i> Upload File
+              <input type="file" id="wasteImageUpload" accept="image/*" class="hidden">
+              <i data-lucide="upload" class="w-3.5 h-3.5 inline mr-1"></i> Upload Image
+              <input type="file" id="eWasteImageUpload" accept="image/*" class="hidden">
+            </label>
+            <button type="button" id="btnStartWebcam" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-300 bg-slate-800 hover:bg-slate-700">
+              <i data-lucide="camera" class="w-3.5 h-3.5 inline mr-1"></i> Camera
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick 1-Click Test Presets (For SIH Presentation) -->
+      <div class="mb-5">
+        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">1-Click Test Scenarios (Instant AI Analysis):</span>
+        <div id="samplePresetsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <!-- 1-Click E-Waste Test Presets -->
+      <div class="mb-4">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">1-Click AI Classification Presets:</span>
+        <div id="eWastePresetsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <!-- Injected via scanner.js -->
+        </div>
+      </div>
+
+      <!-- AI Detection Result Card -->
+      <div id="scannerResultCard" class="hidden bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200 mb-5">
+        <div class="flex items-start justify-between gap-3">
+      <!-- Scanner Output Card -->
+      <div id="scannerResultCard" class="hidden p-4 rounded-2xl bg-emerald-50 border border-emerald-200 mb-4 text-xs">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-extrabold text-base text-slate-900" id="resCategoryName">Plastic PET Bottles</h4>
+              <span id="resImpactBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-800">+15 pts/kg</span>
+            </div>
+            <!-- Confidence Meter -->
+            <div class="flex items-center gap-2 mt-1.5">
+              <span class="text-xs text-slate-500 font-semibold" data-i18n="aiConfidence">AI Confidence:</span>
+              <div class="w-24 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                <div id="resConfidenceBar" class="bg-emerald-600 h-1.5 rounded-full" style="width: 96%"></div>
+              </div>
+              <span class="text-xs font-bold text-emerald-700" id="resConfidence">96.8%</span>
+            </div>
+            <!-- Detected Features -->
+            <div class="flex flex-wrap gap-1.5 mt-2" id="resFeaturesDetected">
+              <!-- Injected by JS -->
+            </div>
+            <h5 class="font-extrabold text-sm text-slate-900" id="scanResSubName">Motherboard PCB</h5>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-200 text-emerald-800" id="scanResConditionBadge">Grade A</span>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 block" data-i18n="platformRate">Platform Rate</span>
+            <span class="text-base font-black text-emerald-700" id="resRatePerKg">₹10 / kg</span>
+            <span class="text-slate-400 block text-[10px]">Indicative Range</span>
+            <span class="font-black text-emerald-700 text-sm" id="scanResPriceRange">₹180 - ₹220/kg</span>
+          </div>
+        </div>
+
+        <!-- Quantity & Estimate Calculation -->
+        <div class="mt-4 pt-3 border-t border-emerald-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <label class="text-xs font-bold text-slate-700" data-i18n="estWeight">Estimated Weight:</label>
+            <input type="number" step="0.1" min="0.1" value="4.2" id="resEstWeightInput" class="w-20 p-1.5 rounded-lg border border-slate-300 font-bold text-slate-800 text-center text-xs">
+            <span class="text-xs text-slate-500 font-medium">kg</span>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-slate-500 font-bold">Confidence:</span>
+          <div class="w-24 bg-slate-200 rounded-full h-1.5 overflow-hidden">
+            <div id="scanResConfidenceBar" class="bg-emerald-600 h-1.5 rounded-full" style="width: 96%"></div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-400 block" data-i18n="estValue">Estimated Value</span>
+            <span class="text-lg font-black text-slate-900" id="resEstimatedValue">₹42.00</span>
+          </div>
+          <span class="font-bold text-emerald-700" id="scanResConfidence">96.4%</span>
+        </div>
+
+        <!-- Transparency Disclaimer -->
+        <p class="text-[11px] text-emerald-800/80 mt-3 p-2 rounded-lg bg-emerald-100/50 flex items-start gap-1.5" data-i18n="scannerDisclaimer">
+          <i data-lucide="info" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+          Notice: Photo-based AI estimate is an approximation. Final payment is strictly based on physical digital scale weighing by the Kabadiwala upon arrival.
+        <div id="scanResFeatures" class="flex flex-wrap gap-1"></div>
+        <p class="text-[10px] text-emerald-800/80 mt-2" data-i18n="disclaimerText">
+          AI DEMO PREDICTION: Photo-based computer vision analysis is strictly indicative. Final commercial settlement is based entirely on actual weighbridge weight.
+        </p>
+
+        <button type="button" onclick="addToMixedCart()" class="w-full mt-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> <span data-i18n="addCategoryBtn">Add to Mixed Waste Cart</span>
+        </button>
+      </div>
+
+      <!-- Mixed Waste Cart Section -->
+      <div id="mixedWasteSection" class="border-t border-slate-200 pt-4">
+        <h4 class="font-bold text-sm text-slate-900 mb-2 flex items-center justify-between" data-i18n="mixedWasteTitle">
+          <span>Mixed Waste Items (Calculated Separately)</span>
+          <span class="text-xs font-normal text-slate-500">Add multiple scrap categories</span>
+        </h4>
+
+        <div id="mixedCartItemsList" class="space-y-2 mb-3">
+          <!-- Injected via JS -->
+      <!-- Form Inputs -->
+      <div class="space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Material Category</label>
+            <select id="lotCategorySelect" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white font-semibold text-slate-800"></select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Subcategory & Yield Grade</label>
+            <select id="lotSubcategorySelect" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white font-semibold text-slate-800"></select>
+          </div>
+        </div>
+
+        <div id="mixedCartEmptyNote" class="p-3 text-center rounded-xl bg-slate-50 text-slate-400 text-xs">
+          Scan and add waste items above to request pickup.
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Actual Weight (Scale Reading)</label>
+            <input type="number" step="0.1" id="lotWeightInput" value="15.5" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Physical Condition</label>
+            <select id="lotConditionSelect" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              <option>Grade A - High Yield</option>
+              <option selected>Mixed / Unsorted</option>
+              <option>Burnt / Damaged</option>
+              <option>Dismantled / Shredded</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Procurement Cost (₹ paid to source)</label>
+            <input type="number" step="10" id="lotProcurementCostInput" value="2200" class="w-full p-2.5 rounded-xl border border-slate-200 font-bold text-slate-900">
+          </div>
+        </div>
+
+        <!-- Schedule Pickup Form -->
+        <div class="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1" data-i18n="pickupAddressLabel">Pickup Address</label>
+              <input type="text" id="pickupAddressInput" value="Flat 402, Green Meadows, Sector 21, New Delhi" class="w-full p-2 rounded-lg border border-slate-200 text-xs font-medium">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-700 block mb-1" data-i18n="preferredTimeLabel">Preferred Time Slot</label>
+              <select id="pickupPreferredTimeSelect" class="w-full p-2 rounded-lg border border-slate-200 text-xs font-medium bg-white">
+                <option>Morning (9 AM - 12 PM)</option>
+                <option selected>Afternoon (12 PM - 3 PM)</option>
+                <option>Evening (3 PM - 6 PM)</option>
+              </select>
+            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Collection Source</label>
+            <input type="text" id="lotSourceInput" value="Local Repair Shops & Field Collection" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+            <div>
+              <span class="text-[11px] text-slate-500 block" data-i18n="totalEstQuote">Total Estimated Quote:</span>
+              <span class="text-xl font-black text-emerald-700" id="mixedCartTotalValue">₹0</span>
+              <span class="text-xs text-slate-400 ml-1" id="mixedCartTotalWeight">(0 kg)</span>
+            </div>
+            <button id="btnSubmitPickup" onclick="submitPickupRequest()" disabled class="px-6 py-2.5 rounded-xl font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+              <span data-i18n="confirmPickupBtn">Confirm Pickup Request</span>
+            </button>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Batch Notes</label>
+            <input type="text" id="lotNotesInput" placeholder="Depopulated of heatsinks, clean copper..." class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+        </div>
+
+        <button onclick="submitCreateLot()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md mt-2">
+          Save Digital Material Lot & Discover Prices
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL B: ACTUAL WEIGHING & FAIR SETTLEMENT (KABADIWALA) -->
+  <div id="weighingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('weighingModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+  <!-- MODAL 2: PRICE DISCOVERY & RECYCLER MATCHING -->
+  <div id="priceDiscoveryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 p-6 relative">
+      <button onclick="closeModal('priceDiscoveryModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <span class="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+        Certified Scale Record
+      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+        Transparent Pricing Engine
+      </span>
+      <h3 class="text-lg font-extrabold text-slate-900 mt-1" data-i18n="weighModalTitle">Digital Scale Weighing & Fair Settlement</h3>
+      <p class="text-xs text-slate-500 mb-4" data-i18n="weighModalSub">Enter certified scale readings for each scrap category</p>
+      <h3 class="text-xl font-black text-slate-900 mt-1" data-i18n="priceDiscoveryTitle">E-Waste Price Discovery Engine</h3>
+      <p class="text-xs text-slate-500 mb-4" data-i18n="priceDiscoverySub">Transparent benchmark ranges & live authorized recycler bids</p>
+
+      <div class="bg-slate-100 p-3 rounded-xl mb-4 text-xs">
+        <span class="font-bold text-slate-700">Pickup: <span id="weighPickupCode" class="font-mono text-emerald-800">KC-PICK-10025</span></span>
+        <p class="text-slate-500 mt-0.5" id="weighUserName">Ramesh Kumar</p>
+      </div>
+
+      <!-- Item Weighing Inputs -->
+      <div id="weighItemsContainer">
+        <!-- Injected via JS -->
+      </div>
+
+      <!-- Payment Method Selection -->
+      <div class="mt-4 pt-3 border-t border-slate-200 space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-700" data-i18n="paymentMethodLabel">Payment Method:</label>
+          <select id="weighPaymentMethodSelect" class="p-1.5 rounded-lg border border-slate-300 text-xs font-semibold bg-white">
+            <option value="UPI">⚡ Instant UPI (QR / PhonePe / GPay)</option>
+            <option value="Cash">💵 Physical Cash</option>
+            <option value="Digital Wallet">📱 Digital Wallet</option>
+          </select>
+      <!-- Subcategory Price Band Cards -->
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h4 class="font-black text-base text-slate-900" id="discSubName">Mixed Commercial PCB</h4>
+          <span class="text-xs text-slate-500">Benchmark reference compiled from CPCB e-waste auctions</span>
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+        <div class="flex items-center gap-4 text-xs">
+          <div>
+            <span class="text-xs text-emerald-800 font-semibold block" data-i18n="finalAmountToPay">Final Amount to Pay User</span>
+            <span class="text-2xl font-black text-emerald-900" id="weighTotalPay">₹0.00</span>
+            <span class="text-slate-400 block text-[10px]" data-i18n="marketRangeLabel">Indicative Market Range</span>
+            <span class="font-black text-slate-800 text-sm" id="discMarketMin">₹120</span> – <span class="font-black text-slate-800 text-sm" id="discMarketMax">₹155 / kg</span>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500 block">Total Certified Weight</span>
+            <span class="text-sm font-bold text-slate-800" id="weighTotalWeight">0.0 kg</span>
+          <div class="border-l border-slate-200 pl-4">
+            <span class="text-slate-400 block text-[10px]" data-i18n="histAvgLabel">Historical Average</span>
+            <span class="font-bold text-emerald-700 text-sm" id="discHistAvg">₹138 / kg</span>
+          </div>
+        </div>
+      </div>
+
+        <button onclick="submitWeighingPayment()" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          <span data-i18n="confirmPayBtn">Confirm Payment & Collect Scrap</span>
+        </button>
+      <!-- Historical Price Trend Chart -->
+      <div class="mb-5 bg-white p-4 rounded-2xl border border-slate-200">
+        <span class="text-xs font-bold text-slate-700 block mb-2">Historical 6-Month Price Trend (₹/kg):</span>
+        <div class="h-36 relative">
+          <canvas id="priceTrendChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Recommended Authorized Recyclers with Match Scores -->
+      <div>
+        <h4 class="text-xs font-bold text-slate-800 mb-2 uppercase tracking-wider" data-i18n="bidsTitle">Active Authorized Recycler Offers (Ranked by Match Score):</h4>
+        <div id="recyclerBidsContainer" class="space-y-2.5">
+          <!-- Injected via app.js -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL C: LIVE JOURNEY MAP TRACKING MODAL -->
+  <div id="trackingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 p-6 relative">
+      <button onclick="closeModal('trackingModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+  <!-- MODAL 3: RECYCLER WEIGHBRIDGE INSPECTION & MISMATCH -->
+  <div id="weighbridgeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('weighbridgeModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Header -->
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            Real-Time Material Traceability
+          </span>
+          <span class="font-mono text-xs font-bold text-slate-700" id="trackPickupCode">KC-PICK-10025</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-900 mt-1" data-i18n="trackingTitle">Waste Journey Tracking (Simulated IoT & GPS)</h3>
+        <p class="text-xs text-slate-500" data-i18n="trackingNotice">End-to-end transparency: Household → Informal Collector → Industrial Recycler</p>
+      </div>
+      <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">
+        Weighbridge Assay
+      </span>
+      <h3 class="text-lg font-black text-slate-900 mt-1">Certified Weighbridge Inspection</h3>
+      <p class="text-xs text-slate-500 mb-4">Verify received weight against declared collector manifest.</p>
+
+      <!-- Quick simulation stepper button for Judges -->
+      <div class="mb-4 p-2.5 rounded-xl bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+        <span class="text-amber-800 font-medium">💡 Evaluator Quick Control: Advance through all 10 closed-loop milestones</span>
+        <button onclick="simulateAdvanceStage()" class="px-3 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm">
+          Next Milestone →
+        </button>
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs mb-3 space-y-1">
+        <div class="flex justify-between"><span>Handover Code:</span> <span class="font-mono font-bold text-purple-800" id="wbHandoverCode">KC-HND-10023</span></div>
+        <div class="flex justify-between"><span>Declared Weight:</span> <span class="font-bold text-slate-800" id="wbDeclaredWeight">22.8 kg</span></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Leaflet Map Container -->
+      <div class="space-y-3 text-xs mb-4">
+        <div>
+          <div id="trackingLeafletMap" class="w-full h-80 rounded-2xl border border-slate-200 shadow-inner z-10"></div>
+          <p class="text-[11px] text-slate-400 mt-2 text-center">
+            Simulated GPS waypoint telematics connecting Household, Collector Cart & Industrial MRF.
+          </p>
+          <label class="font-bold text-slate-700 block mb-1">Measured Weighbridge Weight (kg):</label>
+          <input type="number" step="0.1" id="wbMeasuredInput" class="w-full p-2.5 rounded-xl border border-slate-300 font-black text-slate-900 text-center text-base">
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Inspection Notes / Assay Remarks:</label>
+          <input type="text" id="wbNotesInput" placeholder="Zero hazardous moisture, verified copper purity..." class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+
+        <!-- 10-Stage Stepper Timeline -->
+        <div class="max-h-80 overflow-y-auto pr-2 space-y-3" id="trackingTimelineContainer">
+          <!-- Injected via map_tracker.js -->
+        <div id="wbMismatchAlert" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-[11px]">
+          ⚠️ Weight variance &gt; 3% detected! Mismatch will be flagged in regulatory audit log.
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="submitWeighbridgeVerification('confirm')" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md">
+          Confirm Received & Verify ✓
+        </button>
+        <button onclick="submitWeighbridgeVerification('mismatch')" class="py-3 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200">
+          Flag Mismatch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL D: DELIVER TO RECYCLER (KABADIWALA AGGREGATION) -->
+  <div id="deliverRecyclerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('deliverRecyclerModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+  <!-- MODAL 4: BULK LOT MERGING MODAL -->
+  <div id="mergeLotsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('mergeLotsModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <span class="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-1 rounded-full border border-purple-200">
+        Consignment Dispatch
+        Wholesale Aggregation
+      </span>
+      <h3 class="text-lg font-black text-slate-900 mt-1">Dispatch Bulk Consignment to Recycler</h3>
+      <p class="text-xs text-slate-500 mb-4">Sell aggregated material to formal MRF at industrial rates.</p>
+      <h3 class="text-lg font-black text-slate-900 mt-1" data-i18n="btnMergeLots">Bulk Aggregate Lots</h3>
+      <p class="text-xs text-slate-500 mb-4">Combine smaller lots into a wholesale consignment (KC-BULK-XXXXX) for higher recycler prices.</p>
+
+      <div class="space-y-3 text-xs mb-4">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="font-bold text-slate-700 block">Recycler Facility:</span>
+          <span class="text-slate-600">Swachh Bharat Industrial Smelters & Pulpers (Bawana Industrial Hub)</span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="font-bold text-slate-700 block">Aggregated Consignment Manifest:</span>
+          <p class="text-slate-600 mt-1">• 28.5 kg Plastic (Bought @ ₹10, Recycler pays ₹13.50)</p>
+          <p class="text-slate-600">• 34.0 kg Cardboard (Bought @ ₹7, Recycler pays ₹9.50)</p>
+          <p class="text-slate-600">• 16.5 kg Metal (Bought @ ₹25, Recycler pays ₹32.00)</p>
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex justify-between items-center">
+          <div>
+            <span class="text-slate-500 block">Projected Recycler Payout:</span>
+            <span class="text-base font-black text-emerald-700">₹1,235.75</span>
+          </div>
+          <div class="text-right">
+            <span class="text-slate-500 block">Kabadiwala Gross Margin:</span>
+            <span class="text-base font-black text-amber-700">+₹300.25</span>
+          </div>
+        </div>
+      <div id="mergeLotsListContainer" class="max-h-60 overflow-y-auto space-y-2 mb-4">
+        <!-- Injected via app.js -->
+      </div>
+
+      <button onclick="submitRecyclerDelivery()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2">
+        <i data-lucide="truck" class="w-4 h-4"></i> Dispatch Consignment Truck
+      <button onclick="submitMergeLots()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md">
+        Aggregate Selected Lots into Bulk Lot
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL E: DIGITAL RECEIPT MODAL -->
+  <div id="receiptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('receiptModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+  <!-- MODAL 5: 10-STAGE LOT TRACEABILITY MODAL -->
+  <div id="lotTrackingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 p-6 relative">
+      <button onclick="closeModal('lotTrackingModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div id="printableReceipt" class="space-y-4">
+        <div class="text-center border-b border-slate-200 pb-3">
+          <span class="font-extrabold text-lg text-emerald-800">♻️ Kabadiwala Connect</span>
+          <p class="text-[10px] text-slate-400">Formal Recycling Chain Tax Invoice & Weighment Slip</p>
+          <span class="font-mono text-xs font-bold text-slate-700 block mt-1" id="receiptTxnCode">KC-TXN-30018</span>
+      <div class="mb-4">
+        <div class="flex items-center gap-2">
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            E-Waste Closed-Loop Traceability
+          </span>
+          <span class="font-mono text-xs font-bold text-slate-700" id="trackLotCode">KC-LOT-10045</span>
+        </div>
+        <h3 class="text-xl font-black text-slate-900 mt-1">E-Waste Journey & Telematics Map</h3>
+        <p class="text-xs text-slate-500" id="trackLotMaterial">Motherboard PCB (22.8 kg)</p>
+      </div>
+
+        <div class="text-xs space-y-1 text-slate-600">
+          <div class="flex justify-between"><span>Date:</span> <span class="font-medium text-slate-800" id="receiptDate">07 Sep 2026</span></div>
+          <div class="flex justify-between"><span>User:</span> <span class="font-medium text-slate-800" id="receiptUser">Ramesh Kumar (KC-USR-10001)</span></div>
+          <div class="flex justify-between"><span>Collector:</span> <span class="font-medium text-slate-800" id="receiptKabadiwala">Santosh Bhai (KC-KAB-20001)</span></div>
+          <div class="flex justify-between"><span>Status:</span> <span class="font-bold text-emerald-600">PAID & CERTIFIED</span></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <div id="lotLeafletMap" class="w-full h-80 rounded-2xl border border-slate-200 shadow-inner z-10"></div>
+          <p class="text-[11px] text-slate-400 mt-2 text-center">
+            Simulated GPS corridor connecting Informal Collector Hub, Logistics Fleet & Licensed MRF.
+          </p>
+        </div>
+
+        <div class="border-t border-b border-slate-200 py-3 text-xs flex justify-between font-bold text-slate-900">
+          <span>Amount Settled:</span>
+          <span class="text-emerald-700 text-sm" id="receiptTotal">₹276.00</span>
+        <div class="max-h-80 overflow-y-auto pr-2 space-y-3" id="lotTimelineContainer">
+          <!-- Injected via map_tracker.js -->
+        </div>
+
+        <div class="text-center">
+          <span class="text-[10px] text-slate-400 block">Digitally verified through Smart India Hackathon Prototype</span>
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-2">
+        <button onclick="printReceipt()" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="printer" class="w-4 h-4"></i> Print Receipt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL F: RATING & FEEDBACK MODAL -->
+  <div id="ratingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+  <!-- MODAL 6: SECONDARY GENERATOR REQUEST MODAL -->
+  <div id="generatorRequestModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden modal-backdrop">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full border border-slate-200 p-6 relative">
+      <button onclick="closeModal('ratingModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+      <button onclick="closeModal('generatorRequestModal')" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-full bg-slate-100 hover:bg-slate-200">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <span class="text-[10px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+        Trust & Quality Control
+      </span>
+      <h3 class="text-lg font-black text-slate-900 mt-1" data-i18n="rateTitle">Rate Your Pickup Experience</h3>
+      <p class="text-xs text-slate-500 mb-4" data-i18n="rateSub">Your honest feedback ensures fair weighing and respectful service</p>
+      <h3 class="text-lg font-black text-slate-900 mt-1">Post E-Waste Pickup Request</h3>
+      <p class="text-xs text-slate-500 mb-4">Nearby informal collectors will be notified to collect your electronic scrap.</p>
+
+      <input type="hidden" id="ratingPickupIdInput" value="1">
+
+      <div class="space-y-3 text-xs mb-4">
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Overall Star Rating:</label>
+          <select id="ratingStarsSelect" class="w-full p-2 rounded-xl border border-slate-200 bg-white font-bold text-amber-600">
+            <option value="5">⭐⭐⭐⭐⭐ 5 Stars - Outstanding & Fair</option>
+            <option value="4">⭐⭐⭐⭐ 4 Stars - Very Good</option>
+            <option value="3">⭐⭐⭐ 3 Stars - Average</option>
+            <option value="2">⭐⭐ 2 Stars - Needs Improvement</option>
+            <option value="1">⭐ 1 Star - Unfair / Late</option>
+          <label class="font-bold text-slate-700 block mb-1">Company / Source Name</label>
+          <input type="text" id="genSourceName" value="Apex Electronics Repair" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Source Type</label>
+          <select id="genSourceType" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+            <option>Repair Centre</option>
+            <option>Small IT Office</option>
+            <option>College / School Lab</option>
+            <option>Household</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Review Comments:</label>
+          <textarea id="ratingReviewTextInput" rows="3" placeholder="Accurate digital scale weighing, prompt arrival, and polite behavior..." class="w-full p-2.5 rounded-xl border border-slate-200 text-xs"></textarea>
+          <label class="font-bold text-slate-700 block mb-1">Contact Phone</label>
+          <input type="text" id="genSourcePhone" value="+91 98112 33445" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Pickup Address</label>
+          <input type="text" id="genSourceAddress" value="Shop 14, Electronics Market, Nehru Place, New Delhi" class="w-full p-2.5 rounded-xl border border-slate-200">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">E-Waste Category</label>
+            <select id="genSourceCat" class="w-full p-2.5 rounded-xl border border-slate-200 bg-white">
+              <option value="pcb">Circuit Boards (PCB)</option>
+              <option value="cables">Cables & Wires</option>
+              <option value="batteries">Batteries</option>
+              <option value="devices">Laptops / Mobiles</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Approx. Weight (kg)</label>
+            <input type="number" id="genSourceWeight" value="18.0" class="w-full p-2.5 rounded-xl border border-slate-200">
+          </div>
+        </div>
+
+        <button onclick="submitGeneratorRequest()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md mt-2">
+          Submit to Nearby Collectors
+        </button>
+      </div>
+
+      <button onclick="submitUserRating()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md" data-i18n="submitRatingBtn">
+        Submit Rating
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer"></div>
+
+  <!-- ========================================== -->
+  <!-- 8. FOOTER -->
+  <!-- 9. FOOTER -->
+  <!-- ========================================== -->
+  <footer class="bg-slate-900 text-white border-t border-slate-800 py-10 mt-auto text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white">
+          <i data-lucide="recycle" class="w-5 h-5"></i>
+        <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-bold">
+          <i data-lucide="cpu" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="font-bold text-sm">Kabadiwala Connect</span>
+          <span class="font-bold text-sm">Kabadiwala Connect (E-Waste Edition)</span>
+          <p class="text-slate-400 text-[11px]">Bringing the Informal Collector into the Formal Recycling Chain</p>
+        </div>
+      </div>
+      <div class="text-slate-400 text-center sm:text-right">
+        <span>Smart India Hackathon Working Prototype</span>
+        <p class="text-[10px] text-slate-500 mt-0.5">Digitizing Circular Value Chains with Dignity & Transparency</p>
+        <p class="text-[10px] text-slate-500 mt-0.5">Digitizing Circular E-Waste Value Chains with Dignity & Transparency</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/static/js/i18n.js"></script>
+  <script src="/static/js/scanner.js"></script>
+  <script src="/static/js/map_tracker.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
+
